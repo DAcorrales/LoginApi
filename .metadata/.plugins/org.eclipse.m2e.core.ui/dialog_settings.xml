@@ -2,6 +2,7 @@
 <section name="Workbench">
 	<section name="MavenProjectImportWizardPage">
 		<list key="rootDirectory">
+			<item value="C:\JavaProjects\login-api2\LoginApi"/>
 			<item value="C:\JavaProjects\Login_FinalApi"/>
 		</list>
 		<list key="projectNameTemplate">

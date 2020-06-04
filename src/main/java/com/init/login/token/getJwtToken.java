@@ -16,16 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 
-public class getJwtToken  {
+public class GetJwtToken  {
 	
 	public String getJWTToken(String username) {
-		String secretKey = "mySecretKey";
+		String secretKey = "CharmsIoUpdatE";
 		List<GrantedAuthority> grantedAuthorities = AuthorityUtils
-				.commaSeparatedStringToAuthorityList("ROLE_USER");
+				.commaSeparatedStringToAuthorityList("ADMIN_USER");
+		
 		
 		String token = Jwts
 				.builder()
-				.setId("softtekJWT")
+				.setId("TokenJWT")
 				.setSubject(username)
 				.claim("authorities",
 						grantedAuthorities.stream()
@@ -36,13 +37,10 @@ public class getJwtToken  {
 				.signWith(SignatureAlgorithm.HS512,
 						secretKey.getBytes()).compact();
 
-		return "Bearer " + token;
+		return token;
 	}
 
 	
 	
 	}
 	
-
-
-

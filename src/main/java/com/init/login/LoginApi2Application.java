@@ -7,10 +7,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.init.login.rest.JWTAuthorizationFilter;
 
 @SpringBootApplication
 public class LoginApi2Application {
 
+	
 	public static void main(String[] args) {
 		SpringApplication.run(LoginApi2Application.class, args);
 	}
@@ -22,9 +26,10 @@ public class LoginApi2Application {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http.csrf().disable()
-				
+			    .addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests()
-				.antMatchers(HttpMethod.GET, "/getlogin").permitAll()
+				.antMatchers(HttpMethod.GET, "/getlogin","/getuserinformation").permitAll()
+				.antMatchers("/response").access("hasRole('BASIC_USER')")
 				.anyRequest().authenticated();
 		}
 
