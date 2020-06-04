@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 public class GetJwtToken  {
 	
-	public String getJWTToken(String username) {
+	public String getJWTToken(String username,String sendRoles) {
 		String secretKey = "CharmsIoUpdatE";
 		List<GrantedAuthority> grantedAuthorities = AuthorityUtils
-				.commaSeparatedStringToAuthorityList("ADMIN_USER");
+				.commaSeparatedStringToAuthorityList(sendRoles);
 		
 		
 		String token = Jwts

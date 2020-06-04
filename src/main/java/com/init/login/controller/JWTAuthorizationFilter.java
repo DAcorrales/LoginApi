@@ -1,4 +1,4 @@
-package com.init.login.rest;
+package com.init.login.controller;
 
 import java.io.IOException;
 import java.util.List;

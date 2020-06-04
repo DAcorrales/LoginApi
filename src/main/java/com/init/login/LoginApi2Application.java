@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.init.login.rest.JWTAuthorizationFilter;
+import com.init.login.controller.JWTAuthorizationFilter;
 
 @SpringBootApplication
 public class LoginApi2Application {
@@ -28,8 +28,7 @@ public class LoginApi2Application {
 			http.csrf().disable()
 			    .addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests()
-				.antMatchers(HttpMethod.GET, "/getlogin","/getuserinformation").permitAll()
-				.antMatchers("/response").access("hasRole('BASIC_USER')")
+				.antMatchers(HttpMethod.GET, "/getlogin","/getuserinformation","/response").permitAll()
 				.anyRequest().authenticated();
 		}
 
