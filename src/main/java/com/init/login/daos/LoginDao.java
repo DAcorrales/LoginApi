@@ -13,5 +13,7 @@ public interface LoginDao extends JpaRepository<Login,String> {
 			  value = "SELECT * FROM users u WHERE u.name = binary ?1 AND u.password= binary?2", 
 			  nativeQuery = true)
     List<Login> queryLogin(String name, String password);
+	
+	
 
 }

@@ -28,7 +28,8 @@ public class LoginApi2Application {
 			http.csrf().disable()
 			    .addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests()
-				.antMatchers(HttpMethod.GET, "/getlogin","/getuserinformation","/response").permitAll()
+				.antMatchers(HttpMethod.GET, "/getlogin","/getuserinformation","/response","/adduser").permitAll()
+				.antMatchers(HttpMethod.POST, "/adduser").permitAll()
 				.anyRequest().authenticated();
 		}
 

@@ -18,81 +18,85 @@ public class Login {
 	private String Password;
 	
 	@Column(name="fullname",nullable=false,length=45)
-	private String FullName;
+	private String fullname;
 	
 	@Column(name="companyname",nullable=true,length=45)
-	private String CompanyName;
+	private String companyname;
+	
+	@Column(name="position",nullable=true,length=60)
+	private String position;
+	
+	@Column(name="phone",nullable=true,length=60)
+	private String phone;
 	
 	@Column(name="emailaddress",nullable=true,length=60)
-	private String EmailAddress;
+	private String emailaddress;
 	
-	@Column(name="position",nullable=true,length=45)
-	private String Position;
+	@Column(name="workingaddress",nullable=true,length=60)
+	private String workingaddress;
 	
-	@Column(name="phone",nullable=true,length=45)
-	private String Phone;
+	@Column(name="active",nullable=true,length=1)
+	private int active;
+
+	@Column(name="locked",nullable=true,length=1)
+	private int locked;
 	
-	@Column(name="workingaddress",nullable=true,length=45)
-	private String WorkingAddress;
+
 	
-	
-	public String getFullName() {
-		return FullName;
-	}
-
-
-	public void setFullName(String fullName) {
-		FullName = fullName;
-	}
-
-
-	public String getCompanyName() {
-		return CompanyName;
-	}
-
-
-	public void setCompanyName(String companyName) {
-		CompanyName = companyName;
-	}
-
-
-	public String getEmailAddress() {
-		return EmailAddress;
-	}
-
-
-	public void setEmailAddress(String emailAddress) {
-		EmailAddress = emailAddress;
-	}
-
-
 	public String getPosition() {
-		return Position;
+		return position;
 	}
-
 
 	public void setPosition(String position) {
-		Position = position;
+		this.position = position;
 	}
-
 
 	public String getPhone() {
-		return Phone;
+		return phone;
 	}
-
 
 	public void setPhone(String phone) {
-		Phone = phone;
+		this.phone = phone;
 	}
 
-
-	public String getWorkingAddress() {
-		return WorkingAddress;
+	public String getWorkingaddress() {
+		return workingaddress;
 	}
 
+	public void setWorkingaddress(String workingaddress) {
+		this.workingaddress = workingaddress;
+	}
 
-	public void setWorkingAddress(String workingAddress) {
-		WorkingAddress = workingAddress;
+	public int getActive() {
+		return active;
+	}
+
+	public void setActive(int active) {
+		this.active = active;
+	}
+
+	public int getLocked() {
+		return locked;
+	}
+
+	public void setLocked(int locked) {
+		this.locked = locked;
+	}
+
+	public String getCompanyname() {
+		return companyname;
+	}
+
+	public void setCompanyname(String companyname) {
+		this.companyname = companyname;
+	}
+
+	public String getEmailaddress() {
+		return emailaddress;
+	}
+
+	public void setEmailaddress(String emailaddress) {
+		this.emailaddress = emailaddress;
 	}
 
 
@@ -100,12 +104,10 @@ public class Login {
 		return Name;
 	}
 
-	 
 	public void setName(String name) {
 		Name = name;
 	}
 
-	 
 	public String getPassword() {
 		return Password;
 	}
@@ -114,4 +116,16 @@ public class Login {
 		Password = password;
 	}
 
+	public String getFullname() {
+		return fullname;
+	}
+
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
+	}
+	
+
+	
+	
+	
 }
