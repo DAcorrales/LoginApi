@@ -1,5 +1,7 @@
 package com.init.login.controller;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,14 +12,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.init.login.daos.EventLogDao;
 import com.init.login.daos.LoginDao;
 import com.init.login.daos.RolDao;
+import com.init.login.model.EventLog;
 import com.init.login.model.Login;
 import com.init.login.model.Rol;
 import com.init.login.response.Response;
 import com.init.login.response.ResponseCrud;
 import com.init.login.token.GetJwtToken;
 import com.init.login.token.ValidationJwtToken;
+import com.sun.el.stream.Optional;
 
 
 
@@ -35,6 +41,8 @@ public class LoginRestController {
 	private RolDao rolDao;
 	GetJwtToken generateToken=new GetJwtToken();
 	ValidationJwtToken validationJwtToken=new ValidationJwtToken();
+	@Autowired
+	private EventLogDao eventLogDao;
 	Response response=new Response();
 	
 	
@@ -42,34 +50,73 @@ public class LoginRestController {
 	@RequestMapping(value="getlogin",method=RequestMethod.GET)
 	public Response getUsers(@RequestParam("name") String name, @RequestParam("password") String password)
 	{
+		EventLog event=new EventLog();
+		int remainingAttempts=3;
+		List<Login> users ;
+		
 		try
 		{
-			List<Login> users = loginDao.queryLogin(name, password);
+			users = loginDao.queryLogin(name, password);
 			if(users.isEmpty())
 			{
-				response.setResponseLogin("Usuario o Password incorrecto");
+				java.util.Optional<Login> userLogin= loginDao.findById(name);
+				{
+					if(!userLogin.isEmpty())
+					{
+						Login userTryLogin=userLogin.get();
+						if(remainingAttempts>=0)
+						{
+							remainingAttempts=2-userTryLogin.getLocked();
+			
+						}
+						else
+						{
+							remainingAttempts=0;
+						}
+						userTryLogin.setLocked(userTryLogin.getLocked()+1);
+						loginDao.save(userTryLogin);
+						
+					}
+					
+				}
+				response.setResponseLogin("Usuario o Password incorrecto: Intentos restantes= "+remainingAttempts);
 			    response.setToken(null);
 			}
 			    
 			else
 			{
-				String stringRoles=null;
-				List<String> rolesUser= rolDao.QueryRoles(name);
-				for(String rol:rolesUser)
+				if(users.get(0).getLocked()>2)
 				{
-					if(stringRoles==null)
+					response.setToken(null);  
+					response.setResponseLogin("Usuario Bloqueado por intentos fallidos");
+				}
+				else
+				{
+					users.get(0).setLocked(0);
+					String fecha= LocalDateTime.now().toString();		
+					event.setDate(fecha);
+					event.setName(name);
+
+					eventLogDao.save(event);
+					
+					String stringRoles=null;
+					List<String> rolesUser= rolDao.QueryRoles(name);
+					for(String rol:rolesUser)
 					{
-						stringRoles=rol;
+						if(stringRoles==null)
+						{
+							stringRoles=rol;
+						}
+						else
+						{
+							stringRoles=stringRoles+","+rol;
+						}
 					}
-					else
-					{
-						stringRoles=stringRoles+","+rol;
-					}
+					String sendRoles=stringRoles==null?"ROLE_USER":stringRoles;
+					response.setToken(generateToken.getJWTToken(name,sendRoles));  
+					response.setResponseLogin("Login exitoso");
 					
 				}
-				String sendRoles=stringRoles==null?"ROLE_USER":stringRoles;
-				response.setToken(generateToken.getJWTToken(name,sendRoles));  
-				response.setResponseLogin("Login exitoso");
 			}
 		}
 		catch (Exception e)
