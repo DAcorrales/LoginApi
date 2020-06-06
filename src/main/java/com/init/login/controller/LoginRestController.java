@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.init.login.daos.EventLogDao;
 import com.init.login.daos.LoginDao;
 import com.init.login.daos.RolDao;
+import com.init.login.daos.User_RolesDao;
 import com.init.login.model.EventLog;
 import com.init.login.model.Login;
 import com.init.login.model.Rol;
+import com.init.login.response.GeneralResponse;
+import com.init.login.response.RequestChangePassword;
 import com.init.login.response.Response;
 import com.init.login.response.ResponseCrud;
 import com.init.login.token.GetJwtToken;
@@ -36,6 +39,9 @@ public class LoginRestController {
 	
 	@Autowired
 	private LoginDao loginDao;
+	
+	@Autowired
+	private User_RolesDao userRolesDao;
 	
 	@Autowired
 	private RolDao rolDao;
@@ -129,11 +135,71 @@ public class LoginRestController {
 	}
 	
 	
+	//It allows login an user in the system, obtaining a validation Bearer Token	
+	@RequestMapping(value="changepassword",method=RequestMethod.PUT)
+	public GeneralResponse changepassword(@RequestBody RequestChangePassword request)
+	{
+		
+		GeneralResponse generalResponse=new GeneralResponse();
+		List<Login> users ;
+		
+		try
+		{
+			users = loginDao.queryLogin(request.getName().toString(), request.getCurrentpassword().toString());
+			if(users.isEmpty())
+			{
+				generalResponse.setMessage("Usuario o password incorrecto");
+				
+			}
+			    
+			else
+			{
+				if(request.getNewpassword().equals(request.getRenewpassword()))
+				{
+					Login changingUser=users.get(0);
+					changingUser.setPassword(request.getNewpassword());
+					try {
+						
+						loginDao.save(changingUser);
+						generalResponse.setMessage("Cambio de Password exitoso");
+						
+					}
+					catch(Exception e)
+					{
+						generalResponse.setMessage("Operación Falló: "+e);
+					}
+					
+				}
+				else
+				{
+					generalResponse.setMessage("Operación Falló: El password reescrito no coincide");
+				}
+			
+			
+			}
+		}
+		catch (Exception e)
+		{
+			response.setResponseLogin("Operación fallida: "+e);
+		}
+		
+		
+		return generalResponse;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	   //It allows to save an user in database of the system	
 		@RequestMapping(value="adduser",method=RequestMethod.POST)
 		public ResponseCrud adduser(@RequestHeader(name = "Token") String loginToken,@RequestBody Login user)
 		{
 			ResponseCrud responseCrud=new ResponseCrud();
+			Rol rol=new Rol();
 			JWTAuthorizationFilter authFilter=new JWTAuthorizationFilter();
 			List<GrantedAuthority> isToken=authFilter.validateTokenRol(loginToken);
 			
@@ -143,7 +209,9 @@ public class LoginRestController {
 				{
 					Login newUser;
 					try {
-						 newUser = loginDao.save(user);
+						
+						 newUser = loginDao.save(user);				 
+						 
 						 responseCrud.ResponseEntity= ResponseEntity.ok(newUser);
 						 responseCrud.Message="Operación realizada exitosamente";
 					}
